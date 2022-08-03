@@ -1,4 +1,4 @@
-package com.appsinventiv.verifype;
+package com.appsinventiv.verifype.Activites;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -6,19 +6,21 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class LatestFrauds extends AppCompatActivity {
+import com.appsinventiv.verifype.R;
+
+public class ReportScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_latest_frauds);
+        setContentView(R.layout.activity_report);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         }
+        this.setTitle("Report Screen");
 
-        this.setTitle("Latest Fraud/Scam trends");
 
     }
 

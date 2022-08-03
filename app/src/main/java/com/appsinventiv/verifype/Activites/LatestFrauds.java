@@ -1,4 +1,4 @@
-package com.appsinventiv.verifype;
+package com.appsinventiv.verifype.Activites;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -6,22 +6,24 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ContactUs extends AppCompatActivity {
+import com.appsinventiv.verifype.R;
 
+public class LatestFrauds extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact_us);
+        setContentView(R.layout.activity_latest_frauds);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         }
 
-        this.setTitle("Contact Us");
+        this.setTitle("Latest Fraud/Scam trends");
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
@@ -37,7 +39,5 @@ public class ContactUs extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 }

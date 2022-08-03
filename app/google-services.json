@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "672969740073",
+    "project_id": "verifipe",
+    "storage_bucket": "verifipe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672969740073:android:e19d56ff7d41fc7e507138",
+        "android_client_info": {
+          "package_name": "com.appsinventiv.verifype"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672969740073-kmlilkhffo32s657jov8o8af62lnlbto.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlz5V03m9R9YaLIFesPzgifPslkmaySZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672969740073-kmlilkhffo32s657jov8o8af62lnlbto.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

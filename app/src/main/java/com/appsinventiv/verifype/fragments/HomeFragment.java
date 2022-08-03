@@ -10,10 +10,10 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.appsinventiv.verifype.LatestFrauds;
+import com.appsinventiv.verifype.Activites.LatestFrauds;
 import com.appsinventiv.verifype.R;
-import com.appsinventiv.verifype.ReportScreen;
-import com.appsinventiv.verifype.VerifyScreen;
+import com.appsinventiv.verifype.Activites.ReportScreen;
+import com.appsinventiv.verifype.Activites.VerifyScreen;
 
 public class HomeFragment extends Fragment {
 

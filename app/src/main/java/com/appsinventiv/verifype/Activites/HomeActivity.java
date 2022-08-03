@@ -1,4 +1,4 @@
-package com.appsinventiv.verifype;
+package com.appsinventiv.verifype.Activites;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,6 +16,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.appsinventiv.verifype.ContactsFragment;
+import com.appsinventiv.verifype.R;
 import com.appsinventiv.verifype.fragments.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;

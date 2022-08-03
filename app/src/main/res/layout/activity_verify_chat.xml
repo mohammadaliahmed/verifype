@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomArea" />
+
+    <RelativeLayout
+        android:id="@+id/bottomArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp">
+
+        <EditText
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/send"
+            android:background="@drawable/edit_text_curved"
+            android:hint="Enter Message"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxHeight="150dp"
+            android:minHeight="50dp"
+            android:padding="10dp"
+            android:scrollbars="vertical" />
+
+        <ImageView
+            android:id="@+id/send"
+            android:layout_width="50dp"
+
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="10dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:padding="5dp"
+            android:src="@drawable/send_message" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.appsinventiv.verifype;
+package com.appsinventiv.verifype.Activites;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.appsinventiv.verifype.R;
+import com.appsinventiv.verifype.Utils.SharedPrefs;
 
 public class Splash extends AppCompatActivity {
 
@@ -30,13 +33,13 @@ public class Splash extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-//                if (SharedPrefs.getUser() != null) {
-//                    Intent i = new Intent(Splash.this, MainActivity.class);
-//                    startActivity(i);
-//                } else {
-                Intent i = new Intent(Splash.this, HomeActivity.class);
-                startActivity(i);
-//                }
+                if (SharedPrefs.getUser() != null) {
+                    Intent i = new Intent(Splash.this, HomeActivity.class);
+                    startActivity(i);
+                } else {
+                    Intent i = new Intent(Splash.this, LoginScreen.class);
+                    startActivity(i);
+                }
 
                 // close this activity
                 finish();

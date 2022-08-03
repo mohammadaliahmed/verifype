@@ -1,4 +1,4 @@
-package com.appsinventiv.verifype;
+package com.appsinventiv.verifype.Activites;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -6,23 +6,24 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class VerifyScreen extends AppCompatActivity {
+import com.appsinventiv.verifype.R;
+
+public class ContactUs extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_verify);
+        setContentView(R.layout.activity_contact_us);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         }
-        this.setTitle("Verify Screen");
 
-
+        this.setTitle("Contact Us");
 
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
@@ -38,5 +39,7 @@ public class VerifyScreen extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 }
