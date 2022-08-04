@@ -1,9 +1,14 @@
 package com.appsinventiv.verifype;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.appsinventiv.verifype.Adapters.ChatAdapter;
 import com.appsinventiv.verifype.Models.ChatModel;
 import com.appsinventiv.verifype.Models.ObjectModel;
+import com.appsinventiv.verifype.Models.Sms;
+import com.appsinventiv.verifype.Utils.CommonUtils;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,7 +33,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,6 +67,7 @@ public class VerifyChat extends AppCompatActivity {
 
         }
         getPermissions();
+
         message = findViewById(R.id.message);
         send = findViewById(R.id.send);
         recyclerView = findViewById(R.id.recyclerView);
@@ -66,11 +77,7 @@ public class VerifyChat extends AppCompatActivity {
 
         option = getIntent().getStringExtra("option");
 
-        chatList.add(new ChatModel(
-                "" + System.currentTimeMillis(), option, SharedPrefs.getUser().getPhone(),
-                "admin", "text", new ArrayList<>(),
-                System.currentTimeMillis()
-        ));
+        addUserMsg(option);//firstMsg
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,18 +88,11 @@ public class VerifyChat extends AppCompatActivity {
                     msg = message.getText().toString();
                     message.setText("");
 
-                    chatList.add(new ChatModel(
-                            "" + System.currentTimeMillis(), msg, SharedPrefs.getUser().getPhone(),
-                            "admin", "text", new ArrayList<>(),
-                            System.currentTimeMillis()
-                    ));
+                    addUserMsg(msg);//msg from chat window
+
                     if (sequenceCounter <= sequenceMap.size()) {
-                        chatList.add(new ChatModel(
-                                "" + System.currentTimeMillis(),
-                                sequenceMap.get(sequenceCounter).getVarDesc(), "admin",
-                                "user", "text", new ArrayList<>(),
-                                System.currentTimeMillis()
-                        ));
+                        addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(),"text",new ArrayList<>());
+
 
                     }
                     adapter.setItemList(chatList);
@@ -108,20 +108,10 @@ public class VerifyChat extends AppCompatActivity {
             @Override
             public void onSelected(ObjectModel model) {
                 if (model.getSequence() == 0) {
-                    chatList.add(new ChatModel(
-                            "" + System.currentTimeMillis(), model.getVarDesc(), SharedPrefs.getUser().getPhone(),
-                            "admin", "text", new ArrayList<>(),
-                            System.currentTimeMillis()
-                    ));
+                    addUserMsg(model.getVarDesc());
                     getSecondSequence(model);
                 } else {
-                    chatList.add(new ChatModel(
-                            "" + System.currentTimeMillis(),
-                            sequenceMap.get(sequenceCounter).getVarDesc(), "admin",
-                            "user", "text", new ArrayList<>(),
-                            System.currentTimeMillis()
-                    ));
-
+                    addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(),"text",new ArrayList<>());
                 }
                 adapter.setItemList(chatList);
                 recyclerView.scrollToPosition(chatList.size() - 1);
@@ -130,31 +120,73 @@ public class VerifyChat extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
         getFirstSequence();
+//        getCallDeatils();
 //        readSMS();
 
 
     }
 
-//    private void readSMS() {
-//        Cursor cursor = getContentResolver().query(Uri.parse("content://sms/inbox"), null, null, null, null);
-//        String msgData = "";
-//        if (cursor.moveToFirst()) { // must check the result to prevent exception
-//            do {
-//
-//                for (int idx = 0; idx < 10; idx++) {
-//                    msgData += " " + cursor.getColumnName(idx) + ":" + cursor.getString(idx);
-//                }
-//                // use msgData
-//            } while (cursor.moveToNext());
-//        } else {
-//            // empty box, no SMS
-//        }
-//
-//        String sg=msgData;
-//    }
+    private void addAdminMsg(String msgToAd,String type,List<ObjectModel> objectList) {
+        chatList.add(new ChatModel(
+                "" + System.currentTimeMillis(),
+                msgToAd, "admin",
+                "user", type, objectList,
+                System.currentTimeMillis()
+        ));
+
+
+
+    }
+
+    private void addUserMsg(String msgToAdd) {
+        chatList.add(new ChatModel(
+                "" + System.currentTimeMillis(), msgToAdd, SharedPrefs.getUser().getPhone(),
+                "admin", "text", new ArrayList<>(),
+                System.currentTimeMillis()
+        ));
+    }
+
+    @SuppressLint("Range")
+    private void readSMS() {
+        List<Sms> lstSms = new ArrayList<Sms>();
+        Sms objSms = new Sms();
+        Uri message = Uri.parse("content://sms/");
+        ContentResolver cr = getContentResolver();
+
+        Cursor c = cr.query(message, null, null, null, null);
+        startManagingCursor(c);
+        int totalSMS = c.getCount();
+
+        if (c.moveToFirst()) {
+            for (int i = 0; i < 10; i++) {
+                objSms = new Sms();
+                objSms.setId(c.getString(c.getColumnIndexOrThrow("_id")));
+                objSms.setAddress(c.getString(c
+                        .getColumnIndexOrThrow("address")));
+                objSms.setMsg(c.getString(c.getColumnIndexOrThrow("body")));
+                objSms.setReadState(c.getString(c.getColumnIndex("read")));
+                objSms.setTime(c.getString(c.getColumnIndexOrThrow("date")));
+                if (c.getString(c.getColumnIndexOrThrow("type")).contains("1")) {
+                    objSms.setFolderName("inbox");
+                } else {
+                    objSms.setFolderName("sent");
+                }
+                lstSms.add(objSms);
+                c.moveToNext();
+            }
+        }
+        // else {
+        // throw new RuntimeException("You have no SMS");
+        // }
+        c.close();
+
+        CommonUtils.showToast("here");
+
+
+    }
 
     private void getSecondSequence(ObjectModel model) {
-        mDatabase.child("call").child(model.getVarName()).child(model.getVarValue()).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(option).child(model.getVarName()).child(model.getVarValue()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
@@ -168,13 +200,8 @@ public class VerifyChat extends AppCompatActivity {
 
                     }
                     message.setEnabled(true);
+                    addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(),"text",new ArrayList<>());
 
-                    chatList.add(new ChatModel(
-                            "" + System.currentTimeMillis(),
-                            sequenceMap.get(sequenceCounter).getVarDesc(), "admin",
-                            "user", "text", new ArrayList<>(),
-                            System.currentTimeMillis()
-                    ));
                     adapter.setItemList(chatList);
                     recyclerView.scrollToPosition(chatList.size() - 1);
                     sequenceCounter += 1;
@@ -191,7 +218,7 @@ public class VerifyChat extends AppCompatActivity {
     }
 
     private void getFirstSequence() {
-        mDatabase.child("call").child("main").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(option).child("main").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
@@ -199,11 +226,8 @@ public class VerifyChat extends AppCompatActivity {
                         ObjectModel model = snapshot1.getValue(ObjectModel.class);
                         objectList.add(model);
                     }
-                    chatList.add(new ChatModel(
-                            "" + System.currentTimeMillis(), "Choose Option", "admin",
-                            "user", "object", objectList,
-                            System.currentTimeMillis()
-                    ));
+                    addAdminMsg("Choose Option","object",objectList);
+
                     adapter.setItemList(chatList);
                 }
             }
@@ -216,6 +240,54 @@ public class VerifyChat extends AppCompatActivity {
 
     }
 
+    private void getCallDeatils() {
+        StringBuffer stringBuffer = new StringBuffer();
+        Cursor managedCursor = managedQuery(CallLog.Calls.CONTENT_URI, null, null, null, null);
+        int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
+        int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
+        int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+
+        int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+        stringBuffer.append("Call Deatils");
+        int counter=0;
+        while (managedCursor.moveToNext()) {
+            counter++;
+            String phNumber = managedCursor.getString(number);
+            String callType = managedCursor.getString(type);
+            String callDate = managedCursor.getString(date);
+            Date callDayTime = new Date(Long.valueOf(callDate));
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+            String reportDate = df.format(callDayTime);
+            String callDuration = managedCursor.getString(duration);
+            String dir = null;
+            int dircode = Integer.parseInt(callType);
+            switch (dircode) {
+                case CallLog.Calls.OUTGOING_TYPE:
+                    dir = "OUTGOING";
+                    break;
+
+                case CallLog.Calls.INCOMING_TYPE:
+                    dir = "INCOMING";
+
+                    break;
+
+                case CallLog.Calls.MISSED_TYPE:
+                    dir = "MISSED";
+                    break;
+
+            }
+            stringBuffer.append("\nPhone Number:--- " + phNumber + " \nCall Type:--- " + dir + " \nCall Date:--- " + callDate + " \nCall duration in sec :--- " + callDuration);
+            stringBuffer.append("\n----------------------------------");
+            CommonUtils.showToast(phNumber);
+            if(counter==10){
+                break;
+            }
+//            logs.add(new LogClass(phNumber, dir, reportDate, callDuration));
+
+
+        }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -237,6 +309,7 @@ public class VerifyChat extends AppCompatActivity {
         int PERMISSION_ALL = 1;
         String[] PERMISSIONS = {
                 Manifest.permission.READ_SMS,
+                Manifest.permission.READ_CALL_LOG,
         };
 
         if (!hasPermissions(this, PERMISSIONS)) {
