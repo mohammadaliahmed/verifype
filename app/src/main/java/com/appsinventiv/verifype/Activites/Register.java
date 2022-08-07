@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,15 +20,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.rilixtech.Country;
+import com.rilixtech.CountryCodePicker;
 
 import java.util.HashMap;
 
 public class Register extends AppCompatActivity {
     EditText phone, password, name;
     Button login, register;
-
-    DatabaseReference mDatabase;
     private HashMap<String, User> usersMap = new HashMap<>();
+    private CountryCodePicker ccp;
+    private String foneCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,21 @@ public class Register extends AppCompatActivity {
         login = findViewById(R.id.login);
         register = findViewById(R.id.register);
         password = findViewById(R.id.password);
-        name = findViewById(R.id.name);
         phone = findViewById(R.id.phone);
-        mDatabase = FirebaseDatabase.getInstance("https://verifipe-default-rtdb.firebaseio.com/").getReference();
 
+        name = findViewById(R.id.name);
+        ccp = (CountryCodePicker) findViewById(R.id.ccp);
+        ccp.registerPhoneNumberTextView(phone);
 
+        foneCode = "+" + ccp.getDefaultCountryCode();
+//        countryName.setText("(" + ccp.getDefaultCountryName() + ")");
+//        ccp.setOnCountryChangeListener(new CountryCodePicker.OnCountryChangeListener() {
+//            @Override
+//            public void onCountrySelected(Country selectedCountry) {
+//                foneCode = "+" + selectedCountry.getPhoneCode();
+//                countryName.setText("(" + selectedCountry.getName() + ")");
+//            }
+//        });
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,56 +63,31 @@ public class Register extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (name.getText().length() == 0) {
-                    name.setError("Enter Name");
-                } else if (phone.getText().length() == 0) {
+                if (phone.getText().length() == 0) {
                     phone.setError("Enter Phone");
+                } else if (phone.getText().length() < 10 || phone.getText().length() > 12) {
+                    phone.setError("Enter valid phone number");
+                } else if (name.getText().length() == 0) {
+                    name.setError("Enter Name");
                 } else if (password.getText().length() == 0) {
                     password.setError("Enter Password");
                 } else {
-                    if (usersMap.containsKey(phone.getText().toString())) {
-                        CommonUtils.showToast("Phone number taken");
-                    } else {
-                        User user = new User(
-                                name.getText().toString(),
-                                phone.getText().toString(),
-                                password.getText().toString());
-                        mDatabase.child("Users").child(phone.getText().toString()).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                CommonUtils.showToast("Successfully registered");
-                                SharedPrefs.setUser(user);
-                                startActivity(new Intent(Register.this,HomeActivity.class));
-                                finish();
-                            }
-                        });
-
-                    }
-
+                    requestCode();
                 }
             }
         });
-
-        mDatabase.child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
-                        usersMap.put(user.getPhone(), user);
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
     }
 
+    private void requestCode() {
+        String ph = phone.getText().toString();
+        Intent i = new Intent(Register.this, VerifyPhone.class);
+        i.putExtra("number", foneCode + ph);
+        i.putExtra("name", name.getText().toString());
+        i.putExtra("password", password.getText().toString());
+        startActivity(i);
+
+
+    }
 
 
 }

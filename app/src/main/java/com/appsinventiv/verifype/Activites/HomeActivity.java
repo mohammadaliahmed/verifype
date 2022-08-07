@@ -18,10 +18,16 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.appsinventiv.verifype.ContactsFragment;
 import com.appsinventiv.verifype.R;
+import com.appsinventiv.verifype.Utils.SharedPrefs;
 import com.appsinventiv.verifype.fragments.HomeFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -29,6 +35,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private Fragment fragment;
 
     private BottomNavigationView navigation;
+    private DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +55,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         initNavigationDrawer();
         fragment = new HomeFragment();
         loadFragment(fragment);
+        updateFcmKey();
 
+    }
+    private void updateFcmKey() {
+        if (SharedPrefs.getUser() != null) {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                @Override
+                public void onComplete(@NonNull Task<String> task) {
+                    String token = task.getResult();
+                    SharedPrefs.setFcmKey(token);
+                    mDatabase = FirebaseDatabase.getInstance("https://verifipe-default-rtdb.firebaseio.com/").getReference();
+
+                    mDatabase.child("Users").child(SharedPrefs.getUser().getPhone()).child("fcmKey").setValue(token);
+
+                }
+            });
+        }
     }
 
     private NavigationBarView.OnItemSelectedListener mOnNavigationItemSelectedListener

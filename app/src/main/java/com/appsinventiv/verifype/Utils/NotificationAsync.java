@@ -23,7 +23,7 @@ public class NotificationAsync extends AsyncTask<String, String, String> {
     Context context;
 
 
-    public final static String AUTH_KEY_FCM_LIVE = "AAAA91yjyaU:APA91bFM4SHeu_4MCchQSW19DODeaHGCyZP2fPw7vPgNYnEu020By2uAMuXFUDRagCHOs86VZWRfI6ZjtPyrYJu-vNeuEHPDlNmZrQpQuSlTvg3TU8CZ2655G3fwu7bCPBO8OVUunDxn";
+    public final static String AUTH_KEY_FCM_LIVE = "AAAAnLAfTyk:APA91bHnVFfmR1NM0jHIz7in9hAKDz8XKocj1M9_FO5gDSmiMeeCg6Z_HZouVm26JD_1VeteCWyx1fUY_8QSW0ND0uiG-DJZ7vs6tJ06-8Uh9NBAW0pe7pgIV5uVftX8U8BCobDBXujy";
     public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
 
     public NotificationAsync(Context context) {
@@ -42,11 +42,7 @@ public class NotificationAsync extends AsyncTask<String, String, String> {
 
         try {
             url = new URL(API_URL_FCM);
-
-
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-
             conn.setUseCaches(false);
             conn.setDoInput(true);
             conn.setDoOutput(true);

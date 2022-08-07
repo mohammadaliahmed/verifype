@@ -17,7 +17,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="Welcome, Anil Y"
+            android:id="@+id/userName"
+            android:text="Welcome,"
             android:textColor="#000"
             android:textSize="20sp" />
 

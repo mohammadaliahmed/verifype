@@ -17,10 +17,10 @@ public class Splash extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_splash);
         getSupportActionBar().hide();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_splash);
 
         new Handler().postDelayed(new Runnable() {
 
@@ -37,8 +37,13 @@ public class Splash extends AppCompatActivity {
                     Intent i = new Intent(Splash.this, HomeActivity.class);
                     startActivity(i);
                 } else {
-                    Intent i = new Intent(Splash.this, LoginScreen.class);
-                    startActivity(i);
+                    if(SharedPrefs.getUser().getCity()==null){
+                        Intent i = new Intent(Splash.this, CompleteProfile.class);
+                        startActivity(i);
+                    }else {
+                        Intent i = new Intent(Splash.this, LoginScreen.class);
+                        startActivity(i);
+                    }
                 }
 
                 // close this activity

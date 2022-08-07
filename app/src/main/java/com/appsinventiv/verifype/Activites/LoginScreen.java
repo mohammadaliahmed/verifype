@@ -34,6 +34,7 @@ public class LoginScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getSupportActionBar().setElevation(0);
         login = findViewById(R.id.login);
         register = findViewById(R.id.register);
         password = findViewById(R.id.password);
@@ -80,13 +81,18 @@ public class LoginScreen extends AppCompatActivity {
     }
 
     private void loginNow(String phone, String pass) {
+        phone = phone.substring(phone.length() - 10);
+
         if (usersMap.containsKey(phone)) {
             User user = usersMap.get(phone);
             if (user.getPassword().equals(pass)) {
                 SharedPrefs.setUser(user);
+                if(user.getCity()==null){
+                    startActivity(new Intent(LoginScreen.this, CompleteProfile.class));
 
-                startActivity(new Intent(LoginScreen.this, HomeActivity.class));
-
+                }else {
+                    startActivity(new Intent(LoginScreen.this, HomeActivity.class));
+                }
                 finish();
 
             } else {
