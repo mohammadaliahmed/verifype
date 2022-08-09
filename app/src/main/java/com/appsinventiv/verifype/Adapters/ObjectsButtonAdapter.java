@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.appsinventiv.verifype.Models.ObjectModel;
 import com.appsinventiv.verifype.R;
+import com.appsinventiv.verifype.Utils.Constants;
 
 import java.util.List;
 
@@ -47,10 +48,14 @@ public class ObjectsButtonAdapter extends RecyclerView.Adapter<ObjectsButtonAdap
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callbacks.onOptionClicked(item);
+                if(!Constants.OPTION_CLICKED) {
+                    Constants.OPTION_CLICKED=true;
+                    callbacks.onOptionClicked(item);
+                }
 
             }
         });
+
     }
 
     @Override
