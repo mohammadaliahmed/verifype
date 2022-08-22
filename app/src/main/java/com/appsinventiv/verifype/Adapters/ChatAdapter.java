@@ -16,6 +16,7 @@ import com.appsinventiv.verifype.Models.ObjectModel;
 import com.appsinventiv.verifype.R;
 import com.appsinventiv.verifype.Utils.CommonUtils;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -89,8 +90,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             }
 
         } else {
+            if (model.getMsgType().equalsIgnoreCase("image")) {
+                holder.message.setVisibility(View.GONE);
+                holder.image.setVisibility(View.VISIBLE);
+                Glide.with(context).load(model.getImgUrl()).into(holder.image);
+
+            } else {
+                holder.message.setVisibility(View.VISIBLE);
+                holder.image.setVisibility(View.GONE);
+                holder.message.setText(model.getMessage());
+
+            }
             holder.leftRecycler.setVisibility(View.GONE);
-            holder.message.setText(model.getMessage());
             holder.time.setText(CommonUtils.getFormattedDate(model.getTime()));
         }
     }
@@ -105,9 +116,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         TextView message, time;
         ImageView picture;
         RecyclerView leftRecycler;
+        ImageView image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            image = itemView.findViewById(R.id.image);
             picture = itemView.findViewById(R.id.picture);
             time = itemView.findViewById(R.id.time);
             leftRecycler = itemView.findViewById(R.id.leftRecycler);

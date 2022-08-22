@@ -13,14 +13,44 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
         <TextView
+            android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:id="@+id/userName"
             android:text="Welcome,"
             android:textColor="#000"
             android:textSize="20sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:id="@+id/warning"
+            android:visibility="gone"
+            android:layout_marginBottom="20dp"
+            android:background="#2DFF0000">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Please complete your profile"
+                android:textColor="#FF0000" />
+            <ImageView
+                android:layout_width="20dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/close"
+
+                android:padding="2dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/close"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_height="20dp"/>
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -93,8 +123,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
             android:text="Latest Fraud/Scam Trends"
             android:textColor="#000"
             android:textSize="20sp" />
@@ -102,27 +132,42 @@
         <LinearLayout
             android:id="@+id/latestFraud"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:background="@drawable/blue_border"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:layout_margin="10dp" />
 
-                android:layout_margin="10dp"
-                android:src="@drawable/fraud_alert" />
-
-            <TextView
+            <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+                android:id="@+id/dotsIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="OCBC to give S$13.7 Million of goodwill \npayouts adter scam"
-                android:textColor="#000"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                app:dotsColor="@color/colorAccent"
+                app:dotsSize="5dp"
+                app:dotsWidthFactor="3" />
+
+            <!--            <ImageView-->
+            <!--                android:layout_width="70dp"-->
+            <!--                android:layout_height="70dp"-->
+            <!--                android:layout_gravity="center"-->
+
+            <!--                android:layout_margin="10dp"-->
+            <!--                android:src="@drawable/fraud_alert" />-->
+
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_margin="10dp"-->
+            <!--                android:text="OCBC to give S$13.7 Million of goodwill \npayouts adter scam"-->
+            <!--                android:textColor="#000"-->
+            <!--                android:textStyle="bold" />-->
         </LinearLayout>
 
         <TextView

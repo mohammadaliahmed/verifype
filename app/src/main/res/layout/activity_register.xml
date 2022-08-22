@@ -7,11 +7,23 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <TextView
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:padding="5dp"
+
+        android:text="Sign In"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
         android:src="@drawable/verify_logo" />
 
 
@@ -84,6 +96,29 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/checkit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:layout_margin="10dp" />
+
+        <TextView
+            android:id="@+id/textt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/register"
         android:layout_width="200dp"
@@ -92,23 +127,8 @@
         android:layout_gravity="center"
         android:layout_margin="20dp"
         android:background="@drawable/btn_bg"
+        android:inputType="text"
         android:text="Register"
-        android:textColor="#fff" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="30dp"
-        android:text="Already have an account?" />
-
-    <Button
-        android:id="@+id/login"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/btn_bg"
-        android:text="Login"
         android:textColor="#fff" />
 
 

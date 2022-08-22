@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,7 +36,12 @@ import com.appsinventiv.verifype.Models.LogsModel;
 import com.appsinventiv.verifype.Models.ObjectModel;
 import com.appsinventiv.verifype.Models.Sms;
 import com.appsinventiv.verifype.Utils.CommonUtils;
+import com.appsinventiv.verifype.Utils.CompressImage;
+import com.appsinventiv.verifype.Utils.Constants;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
+import com.bumptech.glide.Glide;
+import com.fxn.pix.Options;
+import com.fxn.pix.Pix;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,6 +57,7 @@ import java.util.List;
 
 public class VerifyChat extends AppCompatActivity {
 
+    private static final int REQUEST_CODE_CHOOSE = 23;
     String option;
     private DatabaseReference mDatabase;
     private List<ObjectModel> objectList = new ArrayList<>();
@@ -62,6 +70,8 @@ public class VerifyChat extends AppCompatActivity {
     ImageView send;
     EditText message;
     String msg;
+    private ArrayList<String> mSelected=new ArrayList<>();
+    private String imageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +95,15 @@ public class VerifyChat extends AppCompatActivity {
         message.setEnabled(false);
 
         option = getIntent().getStringExtra("option");
+        Constants.OPTION_CLICKED=false;
+        addUserMsg(option,"text");//firstMsg
+        if(option.equalsIgnoreCase("QR Code")){
+            addAdminMsg("Capture or pick QR code from gallery", "text", new ArrayList<>());
 
-        addUserMsg(option);//firstMsg
+            openCameraForQR();
+        }else{
+            getFirstSequence();
+        }
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +114,7 @@ public class VerifyChat extends AppCompatActivity {
                     msg = message.getText().toString();
                     message.setText("");
 
-                    addUserMsg(msg);//msg from chat window
+                    addUserMsg(msg,"text");//msg from chat window
                     sequenceCounter += 1;
                     if (sequenceCounter < sequenceMap.size()) {
                         addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
@@ -117,7 +134,7 @@ public class VerifyChat extends AppCompatActivity {
             @Override
             public void onSelected(ObjectModel model) {
                 if (model.getSequence() == 0) {
-                    addUserMsg(model.getVarDesc());
+                    addUserMsg(model.getVarDesc(),"text");
                     getSecondSequence(model);
                 } else {
                     addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
@@ -129,30 +146,58 @@ public class VerifyChat extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
-        getFirstSequence();
+
 //        getCallDeatils();
 //        readSMS();
 
 
     }
 
+    private void openCameraForQR() {
+        Options options = Options.init()
+                .setRequestCode(REQUEST_CODE_CHOOSE)                                           //Request code for activity results
+                .setCount(1)
+                .setExcludeVideos(true)
+
+                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)     //Orientaion
+                ;                                       //Custom Path For media Storage
+
+        Pix.start(this, options);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHOOSE && data != null) {
+            mSelected = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+            CompressImage image = new CompressImage(VerifyChat.this);
+            imageUrl = image.compressImage("" + mSelected.get(0));
+            addUserMsg("","image");
+            adapter.setItemList(chatList);
+            recyclerView.scrollToPosition(chatList.size() - 1);
+
+
+        }
+    }
+
+
     private void addAdminMsg(String msgToAd, String type, List<ObjectModel> objectList) {
         chatList.add(new ChatModel(
                 "" + System.currentTimeMillis(),
                 msgToAd, "admin",
-                "user", type, objectList,
+                "user", type,imageUrl, objectList,
                 System.currentTimeMillis()
         ));
 
 
     }
 
-    private void addUserMsg(String msgToAdd) {
+    private void addUserMsg(String msgToAdd,String msgType) {
         chatList.add(new ChatModel(
                 "" + System.currentTimeMillis(), msgToAdd, SharedPrefs.getUser().getPhone(),
-                "admin", "text", new ArrayList<>(),
+                "admin", msgType,imageUrl, new ArrayList<>(),
                 System.currentTimeMillis()
         ));
+
     }
 
     private void getSecondSequence(ObjectModel model) {
@@ -378,6 +423,9 @@ public class VerifyChat extends AppCompatActivity {
         String[] PERMISSIONS = {
                 Manifest.permission.READ_SMS,
                 Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
         };
 
         if (!hasPermissions(this, PERMISSIONS)) {
@@ -398,6 +446,7 @@ public class VerifyChat extends AppCompatActivity {
         }
         return true;
     }
+
 
 
 }

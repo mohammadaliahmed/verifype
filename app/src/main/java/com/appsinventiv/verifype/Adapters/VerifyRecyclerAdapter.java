@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.appsinventiv.verifype.Activites.ChatScreen;
+import com.appsinventiv.verifype.Models.SupportChatModel;
 import com.appsinventiv.verifype.R;
 import com.appsinventiv.verifype.VerifyChat;
 
@@ -41,14 +43,19 @@ public class VerifyRecyclerAdapter extends RecyclerView.Adapter<VerifyRecyclerAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String item=itemList.get(position);
+        String item = itemList.get(position);
         holder.text.setText(item);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i =new Intent(context, VerifyChat.class);
-                i.putExtra("option",item);
-                context.startActivity(i);
+                if (item.equalsIgnoreCase("others")) {
+                    Intent i = new Intent(context, ChatScreen.class);
+                    context.startActivity(i);
+                } else {
+                    Intent i = new Intent(context, VerifyChat.class);
+                    i.putExtra("option", item);
+                    context.startActivity(i);
+                }
 
             }
         });

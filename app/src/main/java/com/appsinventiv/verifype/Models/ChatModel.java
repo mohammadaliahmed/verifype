@@ -3,7 +3,7 @@ package com.appsinventiv.verifype.Models;
 import java.util.List;
 
 public class ChatModel {
-    String id, message, senderId, sendTo,msgType;
+    String id, message, senderId, sendTo,msgType,imgUrl;
     long time;
     List<ObjectModel> objectList;
 
@@ -11,7 +11,7 @@ public class ChatModel {
     public ChatModel() {
     }
 
-    public ChatModel(String id, String message, String senderId, String sendTo,String msgType,
+    public ChatModel(String id, String message, String senderId, String sendTo,String msgType,String imgUrl,
                      List<ObjectModel> objectList, long time) {
         this.id = id;
         this.objectList = objectList;
@@ -19,7 +19,16 @@ public class ChatModel {
         this.msgType = msgType;
         this.senderId = senderId;
         this.sendTo = sendTo;
+        this.imgUrl = imgUrl;
         this.time = time;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getMsgType() {
