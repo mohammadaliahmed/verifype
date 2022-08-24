@@ -38,6 +38,7 @@ import com.appsinventiv.verifype.Models.Sms;
 import com.appsinventiv.verifype.Utils.CommonUtils;
 import com.appsinventiv.verifype.Utils.CompressImage;
 import com.appsinventiv.verifype.Utils.Constants;
+import com.appsinventiv.verifype.Utils.LogsReader;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
 import com.bumptech.glide.Glide;
 import com.fxn.pix.Options;
@@ -64,47 +65,33 @@ public class VerifyChat extends AppCompatActivity {
     RecyclerView recyclerView;
     ChatAdapter adapter;
     private List<ChatModel> chatList = new ArrayList<>();
-    //    HashMap<Integer, ObjectModel> sequenceMap = new HashMap<>();
     List<ObjectModel> sequenceMap = new ArrayList<>();
     int sequenceCounter = 0;
     ImageView send;
     EditText message;
     String msg;
-    private ArrayList<String> mSelected=new ArrayList<>();
+    private ArrayList<String> mSelected = new ArrayList<>();
     private String imageUrl;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_chat);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setElevation(0);
             this.setTitle("Verify Screen");
-
         }
         getPermissions();
-
         message = findViewById(R.id.message);
         send = findViewById(R.id.send);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         mDatabase = FirebaseDatabase.getInstance("https://verifipe-default-rtdb.firebaseio.com/").getReference();
         message.setEnabled(false);
-
         option = getIntent().getStringExtra("option");
-        Constants.OPTION_CLICKED=false;
-        addUserMsg(option,"text");//firstMsg
-        if(option.equalsIgnoreCase("QR Code")){
-            addAdminMsg("Capture or pick QR code from gallery", "text", new ArrayList<>());
-
-            openCameraForQR();
-        }else{
-            getFirstSequence();
-        }
-
+        Constants.OPTION_CLICKED = false;
+        addUserMsg(option, "text");//firstMsg
+        getFirstSequence();
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,28 +100,22 @@ public class VerifyChat extends AppCompatActivity {
                 } else {
                     msg = message.getText().toString();
                     message.setText("");
-
-                    addUserMsg(msg,"text");//msg from chat window
+                    addUserMsg(msg, "text");//msg from chat window
                     sequenceCounter += 1;
                     if (sequenceCounter < sequenceMap.size()) {
                         addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
 
-
                     }
                     adapter.setItemList(chatList);
-
                     recyclerView.scrollToPosition(chatList.size() - 1);
-
-
                 }
             }
         });
-
         adapter = new ChatAdapter(this, chatList, new ChatAdapter.ChatAdapterCallbacks() {
             @Override
             public void onSelected(ObjectModel model) {
                 if (model.getSequence() == 0) {
-                    addUserMsg(model.getVarDesc(),"text");
+                    addUserMsg(model.getVarDesc(), "text");
                     getSecondSequence(model);
                 } else {
                     addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
@@ -142,26 +123,17 @@ public class VerifyChat extends AppCompatActivity {
                     recyclerView.scrollToPosition(chatList.size() - 1);
                     sequenceCounter = 1;
                 }
-
             }
         });
         recyclerView.setAdapter(adapter);
-
-//        getCallDeatils();
-//        readSMS();
-
-
     }
-
     private void openCameraForQR() {
         Options options = Options.init()
                 .setRequestCode(REQUEST_CODE_CHOOSE)                                           //Request code for activity results
                 .setCount(1)
                 .setExcludeVideos(true)
-
                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)     //Orientaion
                 ;                                       //Custom Path For media Storage
-
         Pix.start(this, options);
     }
     @Override
@@ -171,35 +143,28 @@ public class VerifyChat extends AppCompatActivity {
             mSelected = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
             CompressImage image = new CompressImage(VerifyChat.this);
             imageUrl = image.compressImage("" + mSelected.get(0));
-            addUserMsg("","image");
+            addUserMsg("", "image");
+            sequenceCounter += 1;
+            addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
             adapter.setItemList(chatList);
             recyclerView.scrollToPosition(chatList.size() - 1);
-
-
         }
     }
-
-
     private void addAdminMsg(String msgToAd, String type, List<ObjectModel> objectList) {
         chatList.add(new ChatModel(
                 "" + System.currentTimeMillis(),
                 msgToAd, "admin",
-                "user", type,imageUrl, objectList,
+                "user", type, imageUrl, objectList,
                 System.currentTimeMillis()
         ));
-
-
     }
-
-    private void addUserMsg(String msgToAdd,String msgType) {
+    private void addUserMsg(String msgToAdd, String msgType) {
         chatList.add(new ChatModel(
                 "" + System.currentTimeMillis(), msgToAdd, SharedPrefs.getUser().getPhone(),
-                "admin", msgType,imageUrl, new ArrayList<>(),
+                "admin", msgType, imageUrl, new ArrayList<>(),
                 System.currentTimeMillis()
         ));
-
     }
-
     private void getSecondSequence(ObjectModel model) {
         mDatabase.child(option).child(model.getVarName()).child(model.getVarValue()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -209,36 +174,50 @@ public class VerifyChat extends AppCompatActivity {
                         ObjectModel model1 = snapshot1.getValue(ObjectModel.class);
                         if (model1 != null) {
                             sequenceMap.add(model1);
-
                         }
-
                     }
                     message.setEnabled(true);
                     if (sequenceMap.get(sequenceCounter).getVarValue().equalsIgnoreCase("auto")) {
+                        if (model.getVarName().contains("QR")) {
+                            openCameraForQR();
+                        }
                         if (model.getVarName().contains("sms")) {
-                            readSMS();
+                            LogsReader reader=new LogsReader();
+                            reader.readSms(VerifyChat.this, new LogsReader.LogsCallBack() {
+                                @Override
+                                public void OnLogsSelected(LogsModel model) {
+                                    String msggg = model.getPhone() + "\n" + model.getText();
+                                    message.setText(msggg);
+                                    send.performClick();
+                                }
+                            });
                         } else if (model.getVarName().contains("call")) {
-                            getCallDeatils();
+                            LogsReader reader=new LogsReader();
+                            reader.readCallLogs(VerifyChat.this, new LogsReader.LogsCallBack() {
+                                @Override
+                                public void OnLogsSelected(LogsModel model) {
+                                    String msggg = model.getPhone();
+                                    message.setText(msggg);
+                                    send.performClick();
+                                }
+                            });
+
+
+
                         }
                     } else {
                         addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
-
                         adapter.setItemList(chatList);
                         recyclerView.scrollToPosition(chatList.size() - 1);
                         sequenceCounter += 1;
-
                     }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
-
     }
-
     private void getFirstSequence() {
         mDatabase.child(option).child("main").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -253,153 +232,11 @@ public class VerifyChat extends AppCompatActivity {
                     adapter.setItemList(chatList);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
-
-    }
-
-
-    @SuppressLint("Range")
-    private void readSMS() {
-        List<Sms> lstSms = new ArrayList<Sms>();
-        Sms objSms = new Sms();
-        Uri messagea = Uri.parse("content://sms/");
-        ContentResolver cr = getContentResolver();
-
-        Cursor c = cr.query(messagea, null, null, null, null);
-        startManagingCursor(c);
-        int totalSMS = c.getCount();
-        List<LogsModel> logsList = new ArrayList<>();
-
-        if (c.moveToFirst()) {
-            for (int i = 0; i < 50; i++) {
-                objSms = new Sms();
-                objSms.setId(c.getString(c.getColumnIndexOrThrow("_id")));
-                objSms.setAddress(c.getString(c
-                        .getColumnIndexOrThrow("address")));
-                objSms.setMsg(c.getString(c.getColumnIndexOrThrow("body")));
-                objSms.setReadState(c.getString(c.getColumnIndex("read")));
-                objSms.setTime(c.getString(c.getColumnIndexOrThrow("date")));
-                if (c.getString(c.getColumnIndexOrThrow("type")).contains("1")) {
-                    objSms.setFolderName("inbox");
-                } else {
-                    objSms.setFolderName("sent");
-                }
-
-                lstSms.add(objSms);
-                logsList.add(new LogsModel("" + System.currentTimeMillis(),
-                        objSms.getAddress(), "sms", objSms.getMsg(), Long.parseLong(objSms.getTime())
-                ));
-
-                c.moveToNext();
-            }
-
-        }
-
-        c.close();
-        final Dialog dialog = new Dialog(this);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        LogsAdapter adapter = new LogsAdapter(this, logsList, new LogsAdapter.LogsAdapterCallback() {
-            @Override
-            public void onLogsSelected(LogsModel model) {
-                String msggg = model.getPhone() + "\n" + model.getText();
-                message.setText(msggg);
-                send.performClick();
-                dialog.dismiss();
-            }
-        });
-
-        View layout = layoutInflater.inflate(R.layout.alert_dialog_logs, null);
-        dialog.setContentView(layout);
-        TextView alertTitle = layout.findViewById(R.id.alertTitle);
-        RecyclerView recyclerView = layout.findViewById(R.id.recyclerView);
-        alertTitle.setText("SMS Logs");
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(adapter);
-        dialog.show();
-
-
-    }
-
-    private void getCallDeatils() {
-        StringBuffer stringBuffer = new StringBuffer();
-        Cursor managedCursor = managedQuery(CallLog.Calls.CONTENT_URI, null, null, null, null);
-        int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
-        int type = managedCursor.getColumnIndex(CallLog.Calls.TYPE);
-        int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
-
-        int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
-        stringBuffer.append("Call Deatils");
-        List<LogsModel> logsList = new ArrayList<>();
-        if (managedCursor.moveToFirst()) {
-            for (int i = 0; i < 50; i++) {
-                String phNumber = managedCursor.getString(number);
-                String callType = managedCursor.getString(type);
-                String callDate = managedCursor.getString(date);
-                Date callDayTime = new Date(Long.valueOf(callDate));
-                DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-                String reportDate = df.format(callDayTime);
-                String callDuration = managedCursor.getString(duration);
-                String dir = null;
-                int dircode = Integer.parseInt(callType);
-                switch (dircode) {
-                    case CallLog.Calls.OUTGOING_TYPE:
-                        dir = "OUTGOING";
-                        break;
-
-                    case CallLog.Calls.INCOMING_TYPE:
-                        dir = "INCOMING";
-
-                        break;
-
-                    case CallLog.Calls.MISSED_TYPE:
-                        dir = "MISSED";
-                        break;
-
-                }
-                stringBuffer.append("\nPhone Number:--- " + phNumber + " \nCall Type:--- " + dir + " \nCall Date:--- " + callDate + " \nCall duration in sec :--- " + callDuration);
-                stringBuffer.append("\n----------------------------------");
-//                CommonUtils.showToast(phNumber);
-                logsList.add(new LogsModel("" + System.currentTimeMillis(),
-                        phNumber, "call", dir + "\n" + callDuration + " s", Long.parseLong(callDate)
-                ));
-                managedCursor.moveToNext();
-
-            }
-        }
-        managedCursor.close();
-        final Dialog dialog = new Dialog(this);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        LogsAdapter adapter = new LogsAdapter(this, logsList, new LogsAdapter.LogsAdapterCallback() {
-            @Override
-            public void onLogsSelected(LogsModel model) {
-                String msggg = model.getPhone();
-                message.setText(msggg);
-                send.performClick();
-                dialog.dismiss();
-            }
-        });
-
-        View layout = layoutInflater.inflate(R.layout.alert_dialog_logs, null);
-        dialog.setContentView(layout);
-        TextView alertTitle = layout.findViewById(R.id.alertTitle);
-        RecyclerView recyclerView = layout.findViewById(R.id.recyclerView);
-        alertTitle.setText("Call Logs");
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(adapter);
-        dialog.show();
-
-
     }
 
     @Override
@@ -446,7 +283,6 @@ public class VerifyChat extends AppCompatActivity {
         }
         return true;
     }
-
 
 
 }
