@@ -72,6 +72,10 @@ public class VerifyChat extends AppCompatActivity {
     String msg;
     private ArrayList<String> mSelected = new ArrayList<>();
     private String imageUrl;
+    private boolean objecListSizeGreaterThanOne;
+    private ObjectModel randomObjModel;
+    private boolean calledSecondSequence;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,13 +105,20 @@ public class VerifyChat extends AppCompatActivity {
                     msg = message.getText().toString();
                     message.setText("");
                     addUserMsg(msg, "text");//msg from chat window
-                    sequenceCounter += 1;
-                    if (sequenceCounter < sequenceMap.size()) {
-                        addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
 
-                    }
                     adapter.setItemList(chatList);
                     recyclerView.scrollToPosition(chatList.size() - 1);
+                    if (!objecListSizeGreaterThanOne && !calledSecondSequence) {
+                        calledSecondSequence = true;
+                        getSecondSequence(randomObjModel);
+
+                    } else {
+                        sequenceCounter += 1;
+                        if (sequenceCounter < sequenceMap.size()) {
+                            addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
+
+                        }
+                    }
                 }
             }
         });
@@ -127,6 +138,7 @@ public class VerifyChat extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
     }
+
     private void openCameraForQR() {
         Options options = Options.init()
                 .setRequestCode(REQUEST_CODE_CHOOSE)                                           //Request code for activity results
@@ -136,6 +148,7 @@ public class VerifyChat extends AppCompatActivity {
                 ;                                       //Custom Path For media Storage
         Pix.start(this, options);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -150,6 +163,7 @@ public class VerifyChat extends AppCompatActivity {
             recyclerView.scrollToPosition(chatList.size() - 1);
         }
     }
+
     private void addAdminMsg(String msgToAd, String type, List<ObjectModel> objectList) {
         chatList.add(new ChatModel(
                 "" + System.currentTimeMillis(),
@@ -158,6 +172,7 @@ public class VerifyChat extends AppCompatActivity {
                 System.currentTimeMillis()
         ));
     }
+
     private void addUserMsg(String msgToAdd, String msgType) {
         chatList.add(new ChatModel(
                 "" + System.currentTimeMillis(), msgToAdd, SharedPrefs.getUser().getPhone(),
@@ -165,6 +180,7 @@ public class VerifyChat extends AppCompatActivity {
                 System.currentTimeMillis()
         ));
     }
+
     private void getSecondSequence(ObjectModel model) {
         mDatabase.child(option).child(model.getVarName()).child(model.getVarValue()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -182,7 +198,7 @@ public class VerifyChat extends AppCompatActivity {
                             openCameraForQR();
                         }
                         if (model.getVarName().contains("sms")) {
-                            LogsReader reader=new LogsReader();
+                            LogsReader reader = new LogsReader();
                             reader.readSms(VerifyChat.this, new LogsReader.LogsCallBack() {
                                 @Override
                                 public void OnLogsSelected(LogsModel model) {
@@ -192,7 +208,7 @@ public class VerifyChat extends AppCompatActivity {
                                 }
                             });
                         } else if (model.getVarName().contains("call")) {
-                            LogsReader reader=new LogsReader();
+                            LogsReader reader = new LogsReader();
                             reader.readCallLogs(VerifyChat.this, new LogsReader.LogsCallBack() {
                                 @Override
                                 public void OnLogsSelected(LogsModel model) {
@@ -201,7 +217,6 @@ public class VerifyChat extends AppCompatActivity {
                                     send.performClick();
                                 }
                             });
-
 
 
                         }
@@ -213,11 +228,13 @@ public class VerifyChat extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
+
     private void getFirstSequence() {
         mDatabase.child(option).child("main").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -227,11 +244,26 @@ public class VerifyChat extends AppCompatActivity {
                         ObjectModel model = snapshot1.getValue(ObjectModel.class);
                         objectList.add(model);
                     }
-                    addAdminMsg("Choose Option", "object", objectList);
+                    if (objectList.size() > 1) {
+                        objecListSizeGreaterThanOne = true;
+                        addAdminMsg("Choose Option", "object", objectList);
+                        adapter.setItemList(chatList);
 
-                    adapter.setItemList(chatList);
+                    } else {
+                        objecListSizeGreaterThanOne = false;
+
+                        addAdminMsg(objectList.get(0).getVarDesc(), "text", new ArrayList<>());
+                        adapter.setItemList(chatList);
+                        recyclerView.scrollToPosition(chatList.size() - 1);
+                        sequenceCounter = 1;
+                        message.setEnabled(true);
+                        randomObjModel = objectList.get(0);
+
+                    }
+
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
