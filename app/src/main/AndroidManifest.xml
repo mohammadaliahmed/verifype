@@ -46,6 +46,8 @@
         <activity android:name=".Activites.VerifyPhone" />
         <activity android:name=".Activites.CompleteProfile" />
         <activity android:name=".Activites.ChatScreen" />
+        <activity android:name=".Activites.Notifications" />
+
         <service android:name=".Utils.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>

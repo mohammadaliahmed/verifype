@@ -1,5 +1,6 @@
 package com.appsinventiv.verifype.Activites;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -144,6 +145,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (item.getItemId() == android.R.id.home) {
+
+
+            finish();
+        }  if (item.getItemId() == R.id.action_notifications) {
+            startActivity(new Intent(HomeActivity.this,Notifications.class));
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -153,7 +169,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_notifications) {
 
-            Toast.makeText(this, "notificatiobs", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_language) {
 
 
