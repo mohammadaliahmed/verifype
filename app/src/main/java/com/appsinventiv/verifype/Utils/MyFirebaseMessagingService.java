@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import com.appsinventiv.verifype.Activites.ChatScreen;
+import com.appsinventiv.verifype.Activites.HomeActivity;
 import com.appsinventiv.verifype.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -67,11 +68,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        if (type.equalsIgnoreCase("adActivated")) {
 //            resultIntent = new Intent(this, MyAds.class);
 //        } else if (type.equalsIgnoreCase("marketing")) {
-      if (type.equals("msg")) {
+//      if (type.equals("msg")) {
 
-            resultIntent = new Intent(this, ChatScreen.class);
+            resultIntent = new Intent(this, HomeActivity.class);
             resultIntent.putExtra("phone",Id);
-        }
+
 //        }
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
