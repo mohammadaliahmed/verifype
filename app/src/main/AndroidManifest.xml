@@ -47,6 +47,7 @@
         <activity android:name=".Activites.CompleteProfile" />
         <activity android:name=".Activites.ChatScreen" />
         <activity android:name=".Activites.Notifications" />
+        <activity android:name=".Activites.WebViewActivity" />
 
         <service android:name=".Utils.MyFirebaseMessagingService"
             android:exported="false">
