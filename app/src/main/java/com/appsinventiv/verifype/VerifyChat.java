@@ -38,6 +38,7 @@ import com.appsinventiv.verifype.Models.Sms;
 import com.appsinventiv.verifype.Utils.CommonUtils;
 import com.appsinventiv.verifype.Utils.CompressImage;
 import com.appsinventiv.verifype.Utils.Constants;
+import com.appsinventiv.verifype.Utils.KeyboardUtils;
 import com.appsinventiv.verifype.Utils.LogsReader;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
 import com.bumptech.glide.Glide;
@@ -96,6 +97,14 @@ public class VerifyChat extends AppCompatActivity {
         Constants.OPTION_CLICKED = false;
         addUserMsg(option, "text");//firstMsg
         getFirstSequence();
+        KeyboardUtils.addKeyboardToggleListener(this, new KeyboardUtils.SoftKeyboardToggleListener() {
+            @Override
+            public void onToggleSoftKeyboard(boolean isVisible) {
+                recyclerView.scrollToPosition(chatList.size() - 1);
+
+
+            }
+        });
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,6 +127,9 @@ public class VerifyChat extends AppCompatActivity {
                             addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
 
                         }
+
+                        recyclerView.scrollToPosition(chatList.size() - 1);
+
                     }
                 }
             }
@@ -157,8 +169,9 @@ public class VerifyChat extends AppCompatActivity {
             CompressImage image = new CompressImage(VerifyChat.this);
             imageUrl = image.compressImage("" + mSelected.get(0));
             addUserMsg("", "image");
-            sequenceCounter += 1;
+
             addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
+//            sequenceCounter += 1;
             adapter.setItemList(chatList);
             recyclerView.scrollToPosition(chatList.size() - 1);
         }
@@ -193,38 +206,40 @@ public class VerifyChat extends AppCompatActivity {
                         }
                     }
                     message.setEnabled(true);
-                    if (sequenceMap.get(sequenceCounter).getVarValue().equalsIgnoreCase("auto")) {
-                        if (model.getVarName().contains("QR")) {
-                            openCameraForQR();
-                        }
-                        if (model.getVarName().contains("sms")) {
-                            LogsReader reader = new LogsReader();
-                            reader.readSms(VerifyChat.this, new LogsReader.LogsCallBack() {
-                                @Override
-                                public void OnLogsSelected(LogsModel model) {
-                                    String msggg = model.getPhone() + "\n" + model.getText();
-                                    message.setText(msggg);
-                                    send.performClick();
-                                }
-                            });
-                        } else if (model.getVarName().contains("call")) {
-                            LogsReader reader = new LogsReader();
-                            reader.readCallLogs(VerifyChat.this, new LogsReader.LogsCallBack() {
-                                @Override
-                                public void OnLogsSelected(LogsModel model) {
-                                    String msggg = model.getPhone();
-                                    message.setText(msggg);
-                                    send.performClick();
-                                }
-                            });
-
-
-                        }
+                    if (model.getVarName().contains("QR")) {
+                        openCameraForQR();
                     } else {
-                        addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
-                        adapter.setItemList(chatList);
-                        recyclerView.scrollToPosition(chatList.size() - 1);
-                        sequenceCounter += 1;
+                        if (sequenceMap.get(sequenceCounter).getVarValue().equalsIgnoreCase("auto")) {
+
+                            if (model.getVarName().contains("sms")) {
+                                LogsReader reader = new LogsReader();
+                                reader.readSms(VerifyChat.this, new LogsReader.LogsCallBack() {
+                                    @Override
+                                    public void OnLogsSelected(LogsModel model) {
+                                        String msggg = model.getPhone() + "\n" + model.getText();
+                                        message.setText(msggg);
+                                        send.performClick();
+                                    }
+                                });
+                            } else if (model.getVarName().contains("call")) {
+                                LogsReader reader = new LogsReader();
+                                reader.readCallLogs(VerifyChat.this, new LogsReader.LogsCallBack() {
+                                    @Override
+                                    public void OnLogsSelected(LogsModel model) {
+                                        String msggg = model.getPhone();
+                                        message.setText(msggg);
+                                        send.performClick();
+                                    }
+                                });
+
+
+                            }
+                        } else {
+                            addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
+                            adapter.setItemList(chatList);
+                            recyclerView.scrollToPosition(chatList.size() - 1);
+//                            sequenceCounter += 1;
+                        }
                     }
                 }
             }
@@ -255,7 +270,7 @@ public class VerifyChat extends AppCompatActivity {
                         addAdminMsg(objectList.get(0).getVarDesc(), "text", new ArrayList<>());
                         adapter.setItemList(chatList);
                         recyclerView.scrollToPosition(chatList.size() - 1);
-                        sequenceCounter = 1;
+//                        sequenceCounter = 1;
                         message.setEnabled(true);
                         randomObjModel = objectList.get(0);
 
