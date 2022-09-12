@@ -21,7 +21,12 @@ import com.appsinventiv.verifype.Models.BannerModel;
 import com.appsinventiv.verifype.R;
 import com.appsinventiv.verifype.Activites.ReportScreen;
 import com.appsinventiv.verifype.Activites.VerifyScreen;
+import com.appsinventiv.verifype.Utils.Constants;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
 
 import java.util.ArrayList;
@@ -34,6 +39,8 @@ public class HomeFragment extends Fragment {
     TextView userName;
     ImageView close;
     RelativeLayout warning;
+    DatabaseReference mDatabase;
+    ArrayList<BannerModel> sliderList = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +57,8 @@ public class HomeFragment extends Fragment {
         } else {
             warning.setVisibility(View.GONE);
         }
+        mDatabase = Constants.M_DATABASE;
+        getBannersFromDb();
         warning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,11 +89,31 @@ public class HomeFragment extends Fragment {
                 startActivity(new Intent(getActivity(), LatestFrauds.class));
             }
         });
+
+        return rootView;
+    }
+
+    private void getBannersFromDb() {
+        mDatabase.child("Banners").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    BannerModel model = snapshot1.getValue(BannerModel.class);
+                    sliderList.add(model);
+
+                }
+                setUpViewPager();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void setUpViewPager() {
         ViewPager viewPager = rootView.findViewById(R.id.viewpager);
-        ArrayList<BannerModel> sliderList = new ArrayList<>();
-        sliderList.add(new BannerModel("sdas", "https://www.worcester.gov.uk/images/easyblog_shared/2020/Scam-alert-shutterstock_1012719211.jpg", "text1"));
-        sliderList.add(new BannerModel("sdas", "https://www.worcester.gov.uk/images/easyblog_shared/2020/Scam-alert-shutterstock_1012719211.jpg", "text2"));
-        sliderList.add(new BannerModel("sdas", "https://www.worcester.gov.uk/images/easyblog_shared/2020/Scam-alert-shutterstock_1012719211.jpg", "text3"));
         MainSliderAdapter adapter = new MainSliderAdapter(getContext(), sliderList);
 
         viewPager.setAdapter(adapter);
@@ -92,7 +121,6 @@ public class HomeFragment extends Fragment {
         DotsIndicator dotsIndicator = rootView.findViewById(R.id.dotsIndicator);
         viewPager.setOffscreenPageLimit(1);
         dotsIndicator.setViewPager(viewPager);
-        return rootView;
     }
 
     @Override

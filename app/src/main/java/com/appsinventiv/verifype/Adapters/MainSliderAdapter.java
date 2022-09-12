@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.appsinventiv.verifype.Activites.LatestFrauds;
+import com.appsinventiv.verifype.Activites.WebViewActivity;
 import com.appsinventiv.verifype.Models.BannerModel;
 import com.appsinventiv.verifype.R;
 import com.bumptech.glide.Glide;
@@ -36,14 +37,15 @@ public class MainSliderAdapter  extends PagerAdapter {
         View view = layoutInflater.inflate(R.layout.main_product_slider, container, false);
         ImageView imageView = view.findViewById(R.id.slider_image);
         TextView sliderText = view.findViewById(R.id.sliderText);
-        Glide.with(context).load(picturesList.get(position).getImgUrl()).into(imageView);
+        Glide.with(context).load(picturesList.get(position).getImageUrl()).into(imageView);
         container.addView(view);
-        sliderText.setText(picturesList.get(position).getText());
+        sliderText.setText(picturesList.get(position).getMessage());
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(context, LatestFrauds.class);
+                Intent i=new Intent(context, WebViewActivity.class);
+                i.putExtra("url",picturesList.get(position).getUrl());
                 context.startActivity(i);
             }
         });

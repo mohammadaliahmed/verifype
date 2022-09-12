@@ -1,12 +1,24 @@
 package com.appsinventiv.verifype.Models;
 
 public class BannerModel {
-    String id, imgUrl,text;
+    String id, imageUrl,message,url;
 
-    public BannerModel(String id, String imgUrl, String text) {
+    public BannerModel(String id, String imageUrl, String message, String url) {
         this.id = id;
-        this.imgUrl = imgUrl;
-        this.text = text;
+        this.url = url;
+        this.imageUrl = imageUrl;
+        this.message = message;
+    }
+
+    public BannerModel() {
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getId() {
@@ -17,19 +29,19 @@ public class BannerModel {
         this.id = id;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getText() {
-        return text;
+    public String getMessage() {
+        return message;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

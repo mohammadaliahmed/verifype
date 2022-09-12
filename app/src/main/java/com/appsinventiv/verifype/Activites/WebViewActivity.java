@@ -38,7 +38,7 @@ public class WebViewActivity extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
 
         }
-        this.setTitle("Notifications");
+        this.setTitle("Browser");
         url = getIntent().getStringExtra("url");
         progressBar = findViewById(R.id.progressBar);
         WebView myWebView = findViewById(R.id.webview);
