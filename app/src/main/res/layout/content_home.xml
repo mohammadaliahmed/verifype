@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#fff"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#fff">
 
 
     <FrameLayout
         android:id="@+id/frame_container"
         android:layout_width="match_parent"
-        android:layout_marginTop="70dp"
         android:layout_height="match_parent"
         android:layout_above="@id/customBottomBar"
+        android:layout_marginTop="70dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
@@ -23,12 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        app:menu="@menu/navigation"
-        android:background="?android:attr/windowBackground"
-        android:foreground="?attr/selectableItemBackground"
-        app:itemIconTint="@drawable/nav_item_color_state"
-        app:itemTextColor="@android:color/black"
-        app:labelVisibilityMode="labeled" />
+        app:itemBackground="@color/colorWhite"
+        app:itemIconTint="@color/bnv_tab_item_foreground"
+        app:itemTextColor="@color/bnv_tab_item_foreground"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/navigation" />
 
 
 </RelativeLayout>

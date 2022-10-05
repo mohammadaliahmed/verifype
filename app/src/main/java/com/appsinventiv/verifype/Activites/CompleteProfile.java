@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.appsinventiv.verifype.Models.User;
 import com.appsinventiv.verifype.R;
+import com.appsinventiv.verifype.Utils.Constants;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -103,11 +104,12 @@ public class CompleteProfile extends AppCompatActivity {
     private void saveProfile() {
         wholeLayout.setVisibility(View.VISIBLE);
         HashMap<String,Object> map=new HashMap<>();
+        map.put("name",name.getText().toString());
         map.put("email",email.getText().toString());
         map.put("city",city.getText().toString());
         map.put("country",country.getText().toString());
         map.put("gender",gender);
-        mDatabase = FirebaseDatabase.getInstance("https://verifipe-default-rtdb.firebaseio.com/").getReference();
+        mDatabase = Constants.M_DATABASE;
 
         mDatabase.child("Users").child(SharedPrefs.getUser().getPhone()).updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

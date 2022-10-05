@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.appsinventiv.verifype.Models.User;
 import com.appsinventiv.verifype.R;
 import com.appsinventiv.verifype.Utils.CommonUtils;
+import com.appsinventiv.verifype.Utils.Constants;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
 import com.goodiebag.pinview.Pinview;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -57,7 +58,7 @@ public class VerifyPhone extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_phone);
         getSupportActionBar().setElevation(0);
-        this.setTitle("Verify Phone");
+        this.setTitle("");
 //        verify = findViewById(R.id.verify);
         pin = findViewById(R.id.pinview);
         number = findViewById(R.id.number);
@@ -66,14 +67,9 @@ public class VerifyPhone extends AppCompatActivity {
         changen = findViewById(R.id.changen);
         validate = findViewById(R.id.validate);
         wholeLayout = findViewById(R.id.wholeLayout);
-        mDatabase = FirebaseDatabase.getInstance("https://verifipe-default-rtdb.firebaseio.com/").getReference();
+        mDatabase = Constants.M_DATABASE;
         phoneNumber = getIntent().getStringExtra("number");
-        name = getIntent().getStringExtra("name");
-        password = getIntent().getStringExtra("password");
         number.setText(phoneNumber);
-
-
-        getUsersFromDB();
 
         sendAgain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +82,11 @@ public class VerifyPhone extends AppCompatActivity {
         validate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkUser(); //test
+                Intent intent = new Intent();
+                setResult(123, intent);
+                finish();
+
+
 
 //                if (!pin.getValue().equalsIgnoreCase("")) {
 //                    wholeLayout.setVisibility(View.VISIBLE);
@@ -138,58 +138,7 @@ public class VerifyPhone extends AppCompatActivity {
 
     }
 
-    private void checkUser() {
-        String ph = phoneNumber.substring(phoneNumber.length() - 10);
-        if (usersMap.containsKey(ph)) {
-            SharedPrefs.setUser(usersMap.get(ph));
-            Intent i;
-            if (SharedPrefs.getUser().getCity() == null) {
-                i = new Intent(VerifyPhone.this, CompleteProfile.class);
-            } else {
-                i = new Intent(VerifyPhone.this, HomeActivity.class);
 
-            }
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(i);
-            CommonUtils.showToast("Logged in successfully");
-            finish();
-        } else {
-            User user = new User(
-                    name,
-                    ph,
-                    password, phoneNumber);
-            mDatabase.child("Users").child(ph).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    CommonUtils.showToast("Successfully registered");
-                    SharedPrefs.setUser(user);
-                    Intent i = new Intent(VerifyPhone.this, CompleteProfile.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    finish();
-                }
-            });
-        }
-    }
-
-    private void getUsersFromDB() {
-        mDatabase.child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() != null) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
-                        usersMap.put(user.getPhone(), user);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     private void requestCode() {
 

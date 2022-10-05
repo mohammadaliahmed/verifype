@@ -34,7 +34,7 @@ public class Splash extends AppCompatActivity {
                 // This method will be executed once the timer is over
                 // Start your app main activity
                 if (SharedPrefs.getUser() != null) {
-                    if (SharedPrefs.getUser().getCity() == null) {
+                    if (SharedPrefs.getUser().getName() == null) {
                         Intent i = new Intent(Splash.this, CompleteProfile.class);
                         startActivity(i);
                     } else {

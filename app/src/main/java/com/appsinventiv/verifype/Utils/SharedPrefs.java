@@ -69,6 +69,14 @@ public class SharedPrefs {
         preferenceSetter("getLat", username);
     }
 
+    public static String getPhoneVerified() {
+        return preferenceGetter("getPhoneVerified");
+    }
+
+    public static void setPhoneVerified(String username) {
+        preferenceSetter("getPhoneVerified", username);
+    }
+
     public static String getLon() {
         return preferenceGetter("getLon");
     }

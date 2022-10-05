@@ -3,18 +3,23 @@ package com.appsinventiv.verifype.Models;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    String name, phone, password;
+    String name, phone;
     String fcmKey;
     String fullFone;
-    String city,country,email;
+    String city, country, email;
 
     public User() {
     }
 
-    public User(String name, String phone, String password, String fullFone) {
+    public User(String name, String phone, String fullFone) {
         this.name = name;
         this.phone = phone;
-        this.password = password;
+        this.fullFone = fullFone;
+    }
+
+    public User(String phone, String fullFone) {
+        this.name = name;
+        this.phone = phone;
         this.fullFone = fullFone;
     }
 
@@ -66,13 +71,6 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getFcmKey() {
         return fcmKey;

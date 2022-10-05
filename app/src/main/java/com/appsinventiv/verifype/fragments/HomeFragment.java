@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
         close = rootView.findViewById(R.id.close);
         verify = rootView.findViewById(R.id.verify);
         latestFraud = rootView.findViewById(R.id.latestFraud);
-        userName.setText("Welcome, " + SharedPrefs.getUser().getName());
+        userName.setText("Welcome, " + (SharedPrefs.getUser().getName()==null?"":SharedPrefs.getUser().getName()));
         if (SharedPrefs.getUser().getEmail() == null && SharedPrefs.getUser().getCity() == null) {
             warning.setVisibility(View.VISIBLE);
         } else {

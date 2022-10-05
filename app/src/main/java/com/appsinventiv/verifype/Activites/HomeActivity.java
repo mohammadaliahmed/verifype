@@ -6,7 +6,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -17,10 +16,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.appsinventiv.verifype.ContactsFragment;
+import com.appsinventiv.verifype.fragments.ContactsFragment;
 import com.appsinventiv.verifype.R;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
 import com.appsinventiv.verifype.fragments.HomeFragment;
+import com.appsinventiv.verifype.fragments.ProfileFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -30,7 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar toolbar;
     private Fragment fragment;
@@ -59,6 +59,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         updateFcmKey();
 
     }
+
     private void updateFcmKey() {
         if (SharedPrefs.getUser() != null) {
             FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
@@ -83,33 +84,25 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-
-
                     fragment = new HomeFragment();
                     loadFragment(fragment);
-
-
+                    return true;
+                case R.id.navigation_profile:
+                    fragment = new ProfileFragment();
+                    loadFragment(fragment);
                     return true;
                 case R.id.navigation_contact:
                     fragment = new ContactsFragment();
                     loadFragment(fragment);
-
                     return true;
-//                case R.id.navigation_premium:
-//                    fragment = new PremiumFragment();
-//                    loadFragment(fragment);
-//
-//                    return true;
-//                case R.id.navigation_block:
-////                    fragment = new FAQsFragment();
-//                    loadFragment(fragment);
-//                    return true;
+
 
 
             }
             return false;
         }
     };
+
     private void loadFragment(Fragment fragment) {
         // load fragment
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -117,6 +110,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
     private void initNavigationDrawer() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -135,8 +129,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -152,8 +144,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
             finish();
-        }  if (item.getItemId() == R.id.action_notifications) {
-            startActivity(new Intent(HomeActivity.this,Notifications.class));
+        }
+        if (item.getItemId() == R.id.action_notifications) {
+            startActivity(new Intent(HomeActivity.this, Notifications.class));
 
         }
 

@@ -13,20 +13,22 @@
 
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="150dp"
+            android:layout_marginTop="20dp"
+            android:layout_height="150dp"
             android:layout_gravity="center"
-            android:src="@drawable/verify_logo" />
+            android:src="@drawable/phone_verification" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textStyle="bold"
             android:layout_marginTop="20dp"
 
             android:text="Verify your mobile number"
             android:textColor="#000"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -94,7 +96,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
 
-            android:text="Didnt recieved the code?" />
+            android:text="Didn't received the code?" />
 
         <TextView
             android:id="@+id/sendAgain"
