@@ -95,9 +95,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     fragment = new ContactsFragment();
                     loadFragment(fragment);
                     return true;
-
-
-
             }
             return false;
         }

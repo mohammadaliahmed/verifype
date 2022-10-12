@@ -1,26 +1,17 @@
 package com.appsinventiv.verifype;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.CallLog;
-import android.view.LayoutInflater;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,18 +21,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appsinventiv.verifype.Adapters.ChatAdapter;
-import com.appsinventiv.verifype.Adapters.LogsAdapter;
 import com.appsinventiv.verifype.Models.ChatModel;
 import com.appsinventiv.verifype.Models.LogsModel;
 import com.appsinventiv.verifype.Models.ObjectModel;
-import com.appsinventiv.verifype.Models.Sms;
 import com.appsinventiv.verifype.Utils.CommonUtils;
 import com.appsinventiv.verifype.Utils.CompressImage;
 import com.appsinventiv.verifype.Utils.Constants;
 import com.appsinventiv.verifype.Utils.KeyboardUtils;
 import com.appsinventiv.verifype.Utils.LogsReader;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
-import com.bumptech.glide.Glide;
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
 import com.google.firebase.database.DataSnapshot;
@@ -50,11 +38,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 public class VerifyChat extends AppCompatActivity {
@@ -86,7 +70,7 @@ public class VerifyChat extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
             this.setTitle("Verify Screen");
         }
-        getPermissions();
+
         message = findViewById(R.id.message);
         send = findViewById(R.id.send);
         recyclerView = findViewById(R.id.recyclerView);
@@ -94,6 +78,14 @@ public class VerifyChat extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance("https://verifipe-default-rtdb.firebaseio.com/").getReference();
         message.setEnabled(false);
         option = getIntent().getStringExtra("option");
+        if (option.equalsIgnoreCase("SMS")) {
+            getSMSPermissions();
+
+        } else if (option.equalsIgnoreCase("Call")) {
+            getCallPermissions();
+        } else if (option.equalsIgnoreCase("QR Code")) {
+            getCameraPermissions();
+        }
         Constants.OPTION_CLICKED = false;
         addUserMsg(option, "text");//firstMsg
         getFirstSequence();
@@ -302,14 +294,40 @@ public class VerifyChat extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getPermissions() {
+    private void getSMSPermissions() {
         int PERMISSION_ALL = 1;
         String[] PERMISSIONS = {
                 Manifest.permission.READ_SMS,
+        };
+
+        if (!hasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        } else {
+
+
+        }
+    }
+
+    private void getCallPermissions() {
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
                 Manifest.permission.READ_CALL_LOG,
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
+        };
+
+        if (!hasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        } else {
+
+        }
+    }
+
+    private void getCameraPermissions() {
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
         };
 
         if (!hasPermissions(this, PERMISSIONS)) {
@@ -331,5 +349,28 @@ public class VerifyChat extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                } else {
+
+                    CommonUtils.showToast("Permission denied");
+                    Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()));
+                    myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+                    myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(myAppSettings);
+                    finish();
+
+                }
+
+            }
+
+        }
+
+    }
 }
