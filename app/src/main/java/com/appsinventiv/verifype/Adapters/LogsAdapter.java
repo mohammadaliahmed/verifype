@@ -2,7 +2,6 @@ package com.appsinventiv.verifype.Adapters;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.appsinventiv.verifype.Models.LogsModel;
 import com.appsinventiv.verifype.R;
 import com.appsinventiv.verifype.Utils.CommonUtils;
-import com.appsinventiv.verifype.VerifyChat;
 
 import java.util.List;
 

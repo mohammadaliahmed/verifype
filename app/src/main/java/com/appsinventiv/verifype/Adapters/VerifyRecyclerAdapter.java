@@ -12,9 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.appsinventiv.verifype.Activites.ChatScreen;
-import com.appsinventiv.verifype.Models.SupportChatModel;
 import com.appsinventiv.verifype.R;
-import com.appsinventiv.verifype.VerifyChat;
+import com.appsinventiv.verifype.Activites.VerifyChat;
 
 import java.util.List;
 

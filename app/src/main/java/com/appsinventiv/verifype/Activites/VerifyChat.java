@@ -1,4 +1,4 @@
-package com.appsinventiv.verifype;
+package com.appsinventiv.verifype.Activites;
 
 import android.Manifest;
 import android.content.Intent;
@@ -22,14 +22,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.appsinventiv.verifype.Adapters.ChatAdapter;
 import com.appsinventiv.verifype.Models.ChatModel;
+import com.appsinventiv.verifype.Models.InputModel;
 import com.appsinventiv.verifype.Models.LogsModel;
 import com.appsinventiv.verifype.Models.ObjectModel;
+import com.appsinventiv.verifype.R;
+import com.appsinventiv.verifype.Utils.AppConfig;
 import com.appsinventiv.verifype.Utils.CommonUtils;
 import com.appsinventiv.verifype.Utils.CompressImage;
 import com.appsinventiv.verifype.Utils.Constants;
 import com.appsinventiv.verifype.Utils.KeyboardUtils;
 import com.appsinventiv.verifype.Utils.LogsReader;
 import com.appsinventiv.verifype.Utils.SharedPrefs;
+import com.appsinventiv.verifype.Utils.UserClient;
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
 import com.google.firebase.database.DataSnapshot;
@@ -37,9 +41,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VerifyChat extends AppCompatActivity {
 
@@ -60,6 +72,9 @@ public class VerifyChat extends AppCompatActivity {
     private boolean objecListSizeGreaterThanOne;
     private ObjectModel randomObjModel;
     private boolean calledSecondSequence;
+    HashMap<String, String> apiMap = new HashMap<>();
+
+    int mapCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +86,11 @@ public class VerifyChat extends AppCompatActivity {
             this.setTitle("Verify Screen");
         }
 
+        apiMap.put("type", "verify");
+        apiMap.put("channel_type", "");
+        apiMap.put("channel_sender", "");
+        apiMap.put("channel_entity", "");
+        apiMap.put("channel_message", "");
         message = findViewById(R.id.message);
         send = findViewById(R.id.send);
         recyclerView = findViewById(R.id.recyclerView);
@@ -107,6 +127,15 @@ public class VerifyChat extends AppCompatActivity {
                     message.setText("");
                     addUserMsg(msg, "text");//msg from chat window
 
+                    if (mapCounter == 0) {
+                        apiMap.put("channel_sender", msg);
+                    } else if (mapCounter == 1) {
+                        apiMap.put("channel_entity", msg);
+                    } else if (mapCounter == 2) {
+                        apiMap.put("channel_message", msg);
+                    }
+                    mapCounter++;
+
                     adapter.setItemList(chatList);
                     recyclerView.scrollToPosition(chatList.size() - 1);
                     if (!objecListSizeGreaterThanOne && !calledSecondSequence) {
@@ -114,10 +143,14 @@ public class VerifyChat extends AppCompatActivity {
                         getSecondSequence(randomObjModel);
 
                     } else {
+
                         sequenceCounter += 1;
+
                         if (sequenceCounter < sequenceMap.size()) {
                             addAdminMsg(sequenceMap.get(sequenceCounter).getVarDesc(), "text", new ArrayList<>());
 
+                        }else{
+                            callApi();
                         }
 
                         recyclerView.scrollToPosition(chatList.size() - 1);
@@ -251,6 +284,7 @@ public class VerifyChat extends AppCompatActivity {
                         ObjectModel model = snapshot1.getValue(ObjectModel.class);
                         objectList.add(model);
                     }
+                    apiMap.put("channel_type", objectList.get(0).getVarName());
                     if (objectList.size() > 1) {
                         objecListSizeGreaterThanOne = true;
                         addAdminMsg("Choose Option", "object", objectList);
@@ -274,6 +308,29 @@ public class VerifyChat extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+    }
+
+
+    public void callApi() {
+
+
+        UserClient getResponse = AppConfig.getRetrofit().create(UserClient.class);
+        Gson gson=new Gson();
+        String abc = gson.toJson(apiMap);
+        Call<ResponseBody> call = getResponse.verify(abc);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                CommonUtils.showToast(t.getMessage());
             }
         });
     }
