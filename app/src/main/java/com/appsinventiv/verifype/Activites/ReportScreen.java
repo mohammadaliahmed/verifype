@@ -5,10 +5,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.appsinventiv.verifype.Adapters.ReportRecyclerAdapter;
+import com.appsinventiv.verifype.Adapters.VerifyRecyclerAdapter;
 import com.appsinventiv.verifype.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ReportScreen extends AppCompatActivity {
+
+    RecyclerView recycler;
+    ReportRecyclerAdapter adapter;
+    private List<String> itemList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +31,21 @@ public class ReportScreen extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
 
         }
-        this.setTitle("Report Screen");
+        this.setTitle("Verify Screen");
+        recycler = findViewById(R.id.recycler);
+
+        itemList.add("SMS");
+        itemList.add("Call");
+        itemList.add("Email Id");
+        itemList.add("QR Code");
+        itemList.add("UPI ID");
+        itemList.add("Website");
+        itemList.add("Mobile App Link");
+        itemList.add("Others");
+
+        adapter = new ReportRecyclerAdapter(this, itemList);
+        recycler.setLayoutManager(new GridLayoutManager(this, 3));
+        recycler.setAdapter(adapter);
 
 
     }

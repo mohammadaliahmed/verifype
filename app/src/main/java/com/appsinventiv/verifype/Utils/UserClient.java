@@ -2,6 +2,8 @@ package com.appsinventiv.verifype.Utils;
 
 
 
+import com.appsinventiv.verifype.Models.ApiResponse;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import okhttp3.MultipartBody;
@@ -27,8 +29,14 @@ public interface UserClient {
 
     @Headers("Content-Type: application/json")
     @POST("verify")
-    Call<ResponseBody> verify(
-            @Body String jsonObject
+    Call<ApiResponse> verify(
+            @Body JsonElement jsonObject
+    );
+
+  @Headers("Content-Type: application/json")
+    @POST("report")
+    Call<ApiResponse> report(
+            @Body JsonElement jsonObject
     );
 
 

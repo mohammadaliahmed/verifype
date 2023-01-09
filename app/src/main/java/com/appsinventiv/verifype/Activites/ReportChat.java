@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.appsinventiv.verifype.Adapters.ChatAdapter;
 import com.appsinventiv.verifype.Models.ApiResponse;
 import com.appsinventiv.verifype.Models.ChatModel;
-import com.appsinventiv.verifype.Models.InputModel;
 import com.appsinventiv.verifype.Models.LogsModel;
 import com.appsinventiv.verifype.Models.ObjectModel;
 import com.appsinventiv.verifype.R;
@@ -44,18 +43,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class VerifyChat extends AppCompatActivity {
+public class ReportChat extends AppCompatActivity {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
     String option;
@@ -85,10 +82,10 @@ public class VerifyChat extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setElevation(0);
-            this.setTitle("Verify Screen");
+            this.setTitle("Report Screen");
         }
 
-        apiMap.put("type", "verify");
+        apiMap.put("type", "report");
         apiMap.put("channel_type", "");
         apiMap.put("channel_sender", "");
         apiMap.put("channel_entity", "");
@@ -193,7 +190,7 @@ public class VerifyChat extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && data != null) {
             mSelected = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-            CompressImage image = new CompressImage(VerifyChat.this);
+            CompressImage image = new CompressImage(ReportChat.this);
             imageUrl = image.compressImage("" + mSelected.get(0));
             addUserMsg("", "image");
 
@@ -240,7 +237,7 @@ public class VerifyChat extends AppCompatActivity {
 
                             if (model.getVarName().contains("sms")) {
                                 LogsReader reader = new LogsReader();
-                                reader.readSms(VerifyChat.this, new LogsReader.LogsCallBack() {
+                                reader.readSms(ReportChat.this, new LogsReader.LogsCallBack() {
                                     @Override
                                     public void OnLogsSelected(LogsModel model) {
                                         String msggg = model.getPhone() + "\n" + model.getText();
@@ -250,7 +247,7 @@ public class VerifyChat extends AppCompatActivity {
                                 });
                             } else if (model.getVarName().contains("call")) {
                                 LogsReader reader = new LogsReader();
-                                reader.readCallLogs(VerifyChat.this, new LogsReader.LogsCallBack() {
+                                reader.readCallLogs(ReportChat.this, new LogsReader.LogsCallBack() {
                                     @Override
                                     public void OnLogsSelected(LogsModel model) {
                                         String msggg = model.getPhone();
@@ -316,14 +313,13 @@ public class VerifyChat extends AppCompatActivity {
 
 
     public void callApi() {
+
         KeyboardUtils.forceCloseKeyboard(recyclerView);
-
-
         UserClient getResponse = AppConfig.getRetrofit().create(UserClient.class);
         Gson gson=new Gson();
         JsonElement abc = gson.toJsonTree(apiMap);
 
-        Call<ApiResponse> call = getResponse.verify(abc);
+        Call<ApiResponse> call = getResponse.report(abc);
 
         call.enqueue(new Callback<ApiResponse>() {
             @Override
@@ -341,7 +337,7 @@ public class VerifyChat extends AppCompatActivity {
                         adapter.setItemList(chatList);
                         recyclerView.scrollToPosition(chatList.size() - 1);
 
-
+                        
                     }
                 }
             }
@@ -413,7 +409,7 @@ public class VerifyChat extends AppCompatActivity {
         }
     }
 
-    public boolean hasPermissions(VerifyChat context, String... permissions) {
+    public boolean hasPermissions(ReportChat context, String... permissions) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
             for (String permission : permissions) {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {

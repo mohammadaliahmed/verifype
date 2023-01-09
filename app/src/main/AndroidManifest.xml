@@ -51,6 +51,7 @@
         <activity android:name=".Activites.ChatScreen" />
         <activity android:name=".Activites.Notifications" />
         <activity android:name=".Activites.WebViewActivity" />
+        <activity android:name=".Activites.ReportChat" />
 
         <service android:name=".Utils.MyFirebaseMessagingService"
             android:exported="false">
