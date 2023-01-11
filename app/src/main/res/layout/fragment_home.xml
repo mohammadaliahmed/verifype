@@ -181,6 +181,7 @@
             android:textSize="20sp" />
 
         <LinearLayout
+            android:id="@+id/playGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/blue_border"

@@ -52,6 +52,8 @@
         <activity android:name=".Activites.Notifications" />
         <activity android:name=".Activites.WebViewActivity" />
         <activity android:name=".Activites.ReportChat" />
+        <activity android:name=".Activites.PlayGame" />
+        <activity android:name=".Activites.PsychologyQuestions" />
 
         <service android:name=".Utils.MyFirebaseMessagingService"
             android:exported="false">

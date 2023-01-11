@@ -12,6 +12,20 @@ public class Result {
     @SerializedName("tips")
     @Expose
     private List<String> tips = null;
+    @SerializedName("fraud_profile")
+    @Expose
+    private FraudProfile fraudProfile;
+    @SerializedName("psychology_questions")
+    @Expose
+    private List<PsychologyQuestion> psychologyQuestions = null;
+
+    public List<PsychologyQuestion> getPsychologyQuestions() {
+        return psychologyQuestions;
+    }
+
+    public void setPsychologyQuestions(List<PsychologyQuestion> psychologyQuestions) {
+        this.psychologyQuestions = psychologyQuestions;
+    }
 
     public String getMessage() {
         return message;
@@ -27,5 +41,14 @@ public class Result {
 
     public void setTips(List<String> tips) {
         this.tips = tips;
+    }
+
+
+    public FraudProfile getFraudProfile() {
+        return fraudProfile;
+    }
+
+    public void setFraudProfile(FraudProfile fraudProfile) {
+        this.fraudProfile = fraudProfile;
     }
 }

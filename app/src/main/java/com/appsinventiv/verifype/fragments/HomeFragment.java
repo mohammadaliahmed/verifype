@@ -16,6 +16,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.appsinventiv.verifype.Activites.CompleteProfile;
 import com.appsinventiv.verifype.Activites.LatestFrauds;
+import com.appsinventiv.verifype.Activites.PlayGame;
 import com.appsinventiv.verifype.Adapters.MainSliderAdapter;
 import com.appsinventiv.verifype.Models.BannerModel;
 import com.appsinventiv.verifype.R;
@@ -41,12 +42,14 @@ public class HomeFragment extends Fragment {
     RelativeLayout warning;
     DatabaseReference mDatabase;
     ArrayList<BannerModel> sliderList = new ArrayList<>();
+    LinearLayout playGame;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
         userName = rootView.findViewById(R.id.userName);
         report = rootView.findViewById(R.id.report);
+        playGame = rootView.findViewById(R.id.playGame);
         warning = rootView.findViewById(R.id.warning);
         close = rootView.findViewById(R.id.close);
         verify = rootView.findViewById(R.id.verify);
@@ -63,6 +66,12 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), CompleteProfile.class));
+            }
+        });
+        playGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), PlayGame.class));
             }
         });
         verify.setOnClickListener(new View.OnClickListener() {

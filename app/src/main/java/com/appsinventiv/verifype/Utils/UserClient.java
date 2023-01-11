@@ -1,7 +1,6 @@
 package com.appsinventiv.verifype.Utils;
 
 
-
 import com.appsinventiv.verifype.Models.ApiResponse;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,6 +10,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
@@ -33,10 +33,27 @@ public interface UserClient {
             @Body JsonElement jsonObject
     );
 
-  @Headers("Content-Type: application/json")
+    @Headers("Content-Type: application/json")
     @POST("report")
     Call<ApiResponse> report(
             @Body JsonElement jsonObject
+    );
+
+    @Headers("Content-Type: application/json")
+    @POST("score")
+    Call<ApiResponse> score(
+            @Body JsonElement jsonObject
+    );
+
+    @Headers("Content-Type: application/json")
+    @GET("score")
+    Call<ApiResponse> getScore(
+    );
+
+    @Headers("Content-Type: application/json")
+    @GET("psycho")
+    Call<ApiResponse> psycho(
+
     );
 
 
