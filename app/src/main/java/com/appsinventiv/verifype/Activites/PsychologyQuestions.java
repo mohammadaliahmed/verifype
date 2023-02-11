@@ -1,5 +1,8 @@
 package com.appsinventiv.verifype.Activites;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,9 +10,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +49,8 @@ public class PsychologyQuestions extends AppCompatActivity {
     private HashMap<String, String> deviceMap = new HashMap<>();
     private HashMap<String, String> userMap = new HashMap<>();
     ProgressBar progress;
+    private double lng;
+    private double lat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +62,7 @@ public class PsychologyQuestions extends AppCompatActivity {
             getSupportActionBar().setElevation(0);
 
         }
+        getPermissions();
         this.setTitle("Psychology Questions");
         progress = findViewById(R.id.progress);
         recycler = findViewById(R.id.recycler);
@@ -70,19 +78,19 @@ public class PsychologyQuestions extends AppCompatActivity {
             }
         });
 
-
         getDataFromServer();
 
 
     }
+
 
     private void callApi() {
         progress.setVisibility(View.VISIBLE);
 
         Gson gson = new Gson();
 
-        locationMap.put("latitude", "50.7");
-        locationMap.put("longitude", "45.7");
+        locationMap.put("latitude", ""+lat);
+        locationMap.put("longitude", ""+lng);
 
 
         deviceMap.put("phone_type", "android");
@@ -115,6 +123,7 @@ public class PsychologyQuestions extends AppCompatActivity {
                     FraudProfile fraudProfile = response.body().getResult().getFraudProfile();
                     if (fraudProfile != null) {
                         PlayGame.fraudProfile = fraudProfile;
+                        startActivity(new Intent(PsychologyQuestions.this,PlayGame.class));
                         finish();
                     }
                 }
@@ -125,6 +134,40 @@ public class PsychologyQuestions extends AppCompatActivity {
                 CommonUtils.showToast(t.getMessage());
             }
         });
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (permissions[0].equalsIgnoreCase("android.permission.ACCESS_FINE_LOCATION") && grantResults[0] == 0) {
+            Intent intent = new Intent(PsychologyQuestions.this, GPSTrackerActivity.class);
+            startActivityForResult(intent, 1);
+        }
+    }
+    private void getPermissions() {
+
+        int PERMISSION_ALL = 1;
+        String[] PERMISSIONS = {
+                Manifest.permission.ACCESS_FINE_LOCATION
+
+        };
+
+        if (!hasPermissions(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
+    }
+    public boolean hasPermissions(Context context, String... permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                } else {
+                    Intent intent = new Intent(PsychologyQuestions.this, GPSTrackerActivity.class);
+                    startActivityForResult(intent, 1);
+//                    CommonUtils.showToast("granted");
+                }
+            }
+        }
+        return true;
     }
 
     private void getDataFromServer() {
@@ -151,6 +194,22 @@ public class PsychologyQuestions extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            if (data != null) {
+                Bundle extras = data.getExtras();
+                lng = extras.getDouble("Longitude");
+                lat = extras.getDouble("Latitude");
+
+
+            }
+
+        }
     }
 
     @Override

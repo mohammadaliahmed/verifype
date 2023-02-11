@@ -45,18 +45,18 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Compromise item = itemList.get(position);
-        if (item.getFieldColor().equalsIgnoreCase("red")) {
-            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_red_bg));
-        } else if (item.getFieldColor().equalsIgnoreCase("green")) {
-            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_green_bg));
-        } else if (item.getFieldColor().equalsIgnoreCase("blue")) {
-            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_blue_bg));
-        } else if (item.getFieldColor().equalsIgnoreCase("orange")) {
-            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_orange_bg));
-        } else {
-            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_default_bg));
-
-        }
+//        if (item.getFieldColor().equalsIgnoreCase("red")) {
+//            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_red_bg));
+//        } else if (item.getFieldColor().equalsIgnoreCase("green")) {
+//            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_green_bg));
+//        } else if (item.getFieldColor().equalsIgnoreCase("blue")) {
+//            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_blue_bg));
+//        } else if (item.getFieldColor().equalsIgnoreCase("orange")) {
+//            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_orange_bg));
+//        } else {
+//            holder.rootView.setBackground(context.getResources().getDrawable(R.drawable.compromise_default_bg));
+//
+//        }
 
         holder.fieldName.setText(item.getFieldName());
         holder.fieldScore.setText(""+item.getFieldScore());
@@ -74,12 +74,12 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        RelativeLayout rootView;
+//        RelativeLayout rootView;
         TextView fieldName,fieldScore,fieldTips,fieldFindings;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            rootView = itemView.findViewById(R.id.rootView);
+//            rootView = itemView.findViewById(R.id.rootView);
             fieldName = itemView.findViewById(R.id.fieldName);
             fieldScore = itemView.findViewById(R.id.fieldScore);
             fieldTips = itemView.findViewById(R.id.fieldTips);

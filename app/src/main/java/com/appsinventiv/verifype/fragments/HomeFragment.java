@@ -17,6 +17,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.appsinventiv.verifype.Activites.CompleteProfile;
 import com.appsinventiv.verifype.Activites.LatestFrauds;
 import com.appsinventiv.verifype.Activites.PlayGame;
+import com.appsinventiv.verifype.Activites.PsychologyQuestions;
 import com.appsinventiv.verifype.Adapters.MainSliderAdapter;
 import com.appsinventiv.verifype.Models.BannerModel;
 import com.appsinventiv.verifype.R;
@@ -71,7 +72,7 @@ public class HomeFragment extends Fragment {
         playGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getContext(), PlayGame.class));
+                startActivity(new Intent(getContext(), PsychologyQuestions.class));
             }
         });
         verify.setOnClickListener(new View.OnClickListener() {

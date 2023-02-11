@@ -2,73 +2,103 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="#fff">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/scoreLayout" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/scoreLayout"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-
-        android:layout_height="wrap_content"
-        android:layout_above="@id/getStarted">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/scoreImage"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:src="@drawable/poor" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <TextView
                     android:id="@+id/score"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text=""
                     android:textColor="#000"
-                    android:textSize="25sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/scoreDescription"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_weight="1"
                     android:text=""
                     android:textColor="#000"
-                    android:textSize="25sp" />
-            </RelativeLayout>
+                    android:textSize="20sp" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/detailedDescription"
                 android:layout_width="wrap_content"
-                android:textColor="#000"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="10dp"
-                android:text="" />
+                android:text=""
+                android:textColor="#000" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:nestedScrollingEnabled="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp" />
+
+            </RelativeLayout>
+
         </LinearLayout>
 
 
-    </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/getStarted"
-        android:layout_width="200dp"
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:background="@drawable/btn_bg"
-        android:text="Get Started"
-        android:textColor="#fff" />
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/getStarted"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_bg"
+            android:text="Learn More"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/tutorial"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_bg"
+            android:text="Open Tutorial"
+            android:textColor="#fff" />
+    </LinearLayout>
 
 </RelativeLayout>

@@ -88,6 +88,7 @@ public class VerifyChat extends AppCompatActivity {
             this.setTitle("Verify Screen");
         }
 
+
         apiMap.put("type", "verify");
         apiMap.put("channel_type", "");
         apiMap.put("channel_sender", "");
@@ -317,8 +318,11 @@ public class VerifyChat extends AppCompatActivity {
 
     public void callApi() {
         KeyboardUtils.forceCloseKeyboard(recyclerView);
+        String id=""+System.currentTimeMillis();
+        apiMap.put("id", id);
+        apiMap.put("userId", SharedPrefs.getUser().getPhone());
 
-
+        mDatabase.child("Verfications").child(id).setValue(apiMap);
         UserClient getResponse = AppConfig.getRetrofit().create(UserClient.class);
         Gson gson=new Gson();
         JsonElement abc = gson.toJsonTree(apiMap);

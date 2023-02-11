@@ -96,7 +96,6 @@ public class SharedPrefs {
     public static User getUser() {
         Gson gson = new Gson();
         User customer = gson.fromJson(preferenceGetter("customerModel"), User.class);
-
         return customer;
     }
 

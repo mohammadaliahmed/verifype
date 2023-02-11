@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.appsinventiv.verifype">
     <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -54,6 +55,7 @@
         <activity android:name=".Activites.ReportChat" />
         <activity android:name=".Activites.PlayGame" />
         <activity android:name=".Activites.PsychologyQuestions" />
+        <activity android:name=".Activites.GPSTrackerActivity" />
 
         <service android:name=".Utils.MyFirebaseMessagingService"
             android:exported="false">

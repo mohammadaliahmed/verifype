@@ -316,6 +316,11 @@ public class ReportChat extends AppCompatActivity {
 
         KeyboardUtils.forceCloseKeyboard(recyclerView);
         UserClient getResponse = AppConfig.getRetrofit().create(UserClient.class);
+        String id=""+System.currentTimeMillis();
+        apiMap.put("id", id);
+        apiMap.put("userId", SharedPrefs.getUser().getPhone());
+
+        mDatabase.child("Reports").child(id).setValue(apiMap);
         Gson gson=new Gson();
         JsonElement abc = gson.toJsonTree(apiMap);
 
